@@ -29,7 +29,7 @@ def startOpenBTS(frequency):
     conn.commit()
     
     #start the OpenBTS
-    f=os.popen('~/ddpOpenBTS/runOpenBTS.sh')
+    f=os.popen('~/ddp-stage-2-and-openbts/runOpenBTS.sh')
     f.close()
 	          
 

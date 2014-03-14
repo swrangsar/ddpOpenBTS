@@ -307,7 +307,7 @@ def startOpenBTS(downFrequency):
     conn.commit()
 
     #start the OpenBTS
-    f=subprocess.Popen(os.path.expanduser('~/ddp-stage-1-and-openbts/runOpenBTS.sh'))
+    f=subprocess.Popen(os.path.expanduser('~/ddpOpenBTS/runOpenBTS.sh'))
     f.wait()
 	          
 

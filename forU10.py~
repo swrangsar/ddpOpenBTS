@@ -142,7 +142,7 @@ class my_top_block(gr.top_block):
         self.channel_bandwidth = options.channel_bandwidth
 
         self.down_freq = eng_notation.str_to_num(args[0])
-        self.up_freq = (self.down_freq) - 45e6
+        self.up_freq = self.down_freq - 45e6
 
 
 
@@ -284,10 +284,10 @@ def main_loop(tb):
             lowPowerCount = 0
         else:
             print datetime.now(), "center_freq", center_freq, "power_db", power_db
-            lowPowerCount += 1
+            lowPowerCount += 0
             if (lowPowerCount > lowPowerCountMax):
                 down_freq = center_freq + 45e6
-                startOpenBTS(down_freq)
+
                 break
 
 
@@ -307,7 +307,7 @@ def startOpenBTS(downFrequency):
     conn.commit()
 
     #start the OpenBTS
-    f=subprocess.Popen(os.path.expanduser('~/ddpOpenBTS/runOpenBTS.sh'))
+    f=subprocess.Popen(os.path.expanduser('~/ddp-stage-1-and-openbts/runOpenBTS.sh'))
     f.wait()
 	          
 
