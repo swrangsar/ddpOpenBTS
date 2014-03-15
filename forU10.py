@@ -270,13 +270,14 @@ def main_loop(tb):
         center_freq = m.center_freq
         bins = 10
         power_data = 0
-        
+        noise_floor_db = 10*math.log10(min(m.data)/tb.usrp_rate)
+
         for i in range(1, bins+1):
             power_data += m.data[N-i] + m.data[i]
         power_data += m.data[0]
         power_data /= ((2*bins) + 1)
         
-        power_db = 10*math.log10(power_data/tb.usrp_rate)
+        power_db = 10*math.log10(power_data/tb.usrp_rate) - noise_floor_db
         power_threshold = -111.0
 
         if (power_db > tb.squelch_threshold) and (power_db > power_threshold):
