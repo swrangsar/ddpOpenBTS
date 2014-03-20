@@ -252,6 +252,7 @@ def main_loop(tb):
     lowPowerCountMax = 10
     print 'fft size', tb.fft_size
     N = tb.fft_size
+    cusum = 0
     
 
     while 1:
@@ -279,6 +280,11 @@ def main_loop(tb):
         
         power_db = 10*math.log10(power_data/tb.usrp_rate) - noise_floor_db
         power_threshold = -111.0
+        
+        #cusum cusum cusum is here
+        cusum = max(0, cusum + power_db - power_threshold)
+        if (cusum > 0):
+            print "CUSUM is now positive!!!"
 
         if (power_db > tb.squelch_threshold) and (power_db > power_threshold):
             print datetime.now(), "center_freq", center_freq, "power_db", power_db, "in use"
