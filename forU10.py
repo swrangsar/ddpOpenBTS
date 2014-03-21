@@ -285,10 +285,10 @@ def main_loop(tb):
         power_threshold = -111.0
 
         if (power_db > tb.squelch_threshold) and (power_db > power_threshold):
-            print datetime.now(), "center_freq", center_freq, "power_db", power_db, "in use"
+            print datetime.now(), "center_freq", center_freq, "power_db", power_db, "noise_floor_db", noise_floor_db, "in use"
             lowPowerCount = 0
         else:
-            print datetime.now(), "center_freq", center_freq, "power_db", power_db
+            print datetime.now(), "center_freq", center_freq, "power_db", power_db, "noise_floor_db", noise_floor_db,
             lowPowerCount += 0
             if (lowPowerCount > lowPowerCountMax):
                 down_freq = center_freq + 45e6
