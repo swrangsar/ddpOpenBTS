@@ -266,7 +266,11 @@ def main_loop(tb):
         # You could write this as binary to a file.
 
 
-
+        # experimental area ###
+        print "upfreq", tb.up_freq
+        tb.up_freq += 1e6
+        # experimental area ###
+    
         center_freq = m.center_freq
         bins = 10
         power_data = 0
