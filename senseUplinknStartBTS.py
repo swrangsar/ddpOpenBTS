@@ -246,7 +246,7 @@ class my_top_block(gr.top_block):
 
 
 def main_loop(tb):
-    
+
     # use a counter to make sure power is less than threshold
     lowPowerCount = 0
     lowPowerCountMax = 10
@@ -271,7 +271,7 @@ def main_loop(tb):
         center_freq = m.center_freq
         bins = 10
         power_data = 0
-        noise_floor_db = 10*math.log10(min(m.data)/tb.usrp_rate)
+        noise_floor_db = 0      ##  10*math.log10(min(m.data)/tb.usrp_rate)
         
         for i in range(1, bins+1):
             power_data += m.data[N-i] + m.data[i]
@@ -279,12 +279,9 @@ def main_loop(tb):
         power_data /= ((2*bins) + 1)
         
         power_db = 10*math.log10(power_data/tb.usrp_rate) - noise_floor_db
-        power_threshold = -111.0
+        power_threshold = -100.0
         
-        #cusum cusum cusum is here
-        cusum = max(0, cusum + power_db - power_threshold)
-        if (cusum > 0):
-            print "CUSUM is now positive!!!"
+        
 
         if (power_db > tb.squelch_threshold) and (power_db > power_threshold):
             print datetime.now(), "center_freq", center_freq, "power_db", power_db, "in use"
@@ -292,13 +289,27 @@ def main_loop(tb):
         else:
             print datetime.now(), "center_freq", center_freq, "power_db", power_db
             lowPowerCount += 1
+        '''
             if (lowPowerCount > lowPowerCountMax):
                 down_freq = center_freq + 45e6
                 startOpenBTS(down_freq)
                 break
+        '''
+        #cusum cusum cusum is here
+        cusum = max(0, cusum + power_db - power_threshold)
+        if (cusum > 0):
+            print "CUSUM is now positive!!!"
+            down_freq = center_freq + 45e6
+            quitOpenBTS(down_freq, tb)
+            break
 
 
-def startOpenBTS(downFrequency):            
+
+
+
+
+
+def startOpenBTS(downFrequency,tb):            
     
     
     arfcn=int((downFrequency-935e6)/2e5)
@@ -316,7 +327,25 @@ def startOpenBTS(downFrequency):
     #start the OpenBTS
     f=subprocess.Popen(os.path.expanduser('~/ddpOpenBTS/runOpenBTS.sh'))
     f.wait()
+    tb.msgq.delete_head()
+    time.sleep(0.25)
+    main_loop(tb)
 	          
+
+def quitOpenBTS(downFreq, tb):
+    f=subprocess.Popen(os.path.expanduser('~/ddpOpenBTS/quitOpenBTS.sh'))
+    f.wait()
+    if downFreq <= 945e6:
+        newDownFreq = downFreq + 10e6
+    else:
+        newDownFreq = downFreq - 10e6
+
+    tb.up_freq = newDownFreq - 45e6
+    print "new tb.up_freq: ", tb.up_freq
+    startOpenBTS(newDownFreq, tb)
+        
+
+
 
 if __name__ == '__main__':
     t = ThreadClass()

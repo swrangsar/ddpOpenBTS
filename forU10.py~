@@ -266,11 +266,16 @@ def main_loop(tb):
         # You could write this as binary to a file.
 
 
-
+        # experimental area ###
+        
+        print "upfreq", tb.up_freq
+        tb.up_freq += 1e6
+        # experimental area ###
+    
         center_freq = m.center_freq
         bins = 10
         power_data = 0
-        noise_floor_db = 10*math.log10(min(m.data)/tb.usrp_rate)
+        noise_floor_db = 0 ### 10*math.log10(min(m.data)/tb.usrp_rate)
 
         for i in range(1, bins+1):
             power_data += m.data[N-i] + m.data[i]
@@ -281,10 +286,10 @@ def main_loop(tb):
         power_threshold = -111.0
 
         if (power_db > tb.squelch_threshold) and (power_db > power_threshold):
-            print datetime.now(), "center_freq", center_freq, "power_db", power_db, "in use"
+            print datetime.now(), "center_freq", center_freq, "power_db", power_db, "noise_floor_db", noise_floor_db, "in use"
             lowPowerCount = 0
         else:
-            print datetime.now(), "center_freq", center_freq, "power_db", power_db
+            print datetime.now(), "center_freq", center_freq, "power_db", power_db, "noise_floor_db", noise_floor_db,
             lowPowerCount += 0
             if (lowPowerCount > lowPowerCountMax):
                 down_freq = center_freq + 45e6

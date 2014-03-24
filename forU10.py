@@ -255,6 +255,12 @@ def main_loop(tb):
     
 
     while 1:
+        # experimental area ###
+        
+        print "upfreq", tb.up_freq
+        tb.up_freq += 1e6
+        # experimental area ###
+
 
         # Get the next message sent from the C++ code (blocking call).
         # It contains the center frequency and the mag squared of the fft
@@ -266,15 +272,12 @@ def main_loop(tb):
         # You could write this as binary to a file.
 
 
-        # experimental area ###
-        print "upfreq", tb.up_freq
-        tb.up_freq += 1e6
-        # experimental area ###
+
     
         center_freq = m.center_freq
         bins = 10
         power_data = 0
-        noise_floor_db = 10*math.log10(min(m.data)/tb.usrp_rate)
+        noise_floor_db = 0 ### 10*math.log10(min(m.data)/tb.usrp_rate)
 
         for i in range(1, bins+1):
             power_data += m.data[N-i] + m.data[i]
