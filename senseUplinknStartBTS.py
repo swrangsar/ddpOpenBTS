@@ -248,8 +248,8 @@ class my_top_block(gr.top_block):
 def main_loop(tb):
 
     # use a counter to make sure power is less than threshold
-    lowPowerCount = 0
-    lowPowerCountMax = 10
+    # lowPowerCount = 0
+    # lowPowerCountMax = 10
     print 'fft size', tb.fft_size
     N = tb.fft_size
     cusum = 0
@@ -285,16 +285,16 @@ def main_loop(tb):
 
         if (power_db > tb.squelch_threshold) and (power_db > power_threshold):
             print datetime.now(), "center_freq", center_freq, "power_db", power_db, "in use"
-            lowPowerCount = 0
+            # lowPowerCount = 0
         else:
             print datetime.now(), "center_freq", center_freq, "power_db", power_db
-            lowPowerCount += 1
-        '''
-            if (lowPowerCount > lowPowerCountMax):
-                down_freq = center_freq + 45e6
-                startOpenBTS(down_freq)
-                break
-        '''
+            # lowPowerCount += 1
+
+        #    if (lowPowerCount > lowPowerCountMax):
+        #        down_freq = center_freq + 45e6
+        #        startOpenBTS(down_freq)
+        #        break
+
         #cusum cusum cusum is here
         cusum = max(0, cusum + power_db - power_threshold)
         if (cusum > 0):

@@ -327,8 +327,8 @@ def startOpenBTS(downFrequency,tb):
     #start the OpenBTS
     f=subprocess.Popen(os.path.expanduser('~/ddpOpenBTS/runOpenBTS.sh'))
     f.wait()
-    tb.msgq.flush()
-    time.sleep(1)
+    tb.msgq.delete_head()
+    time.sleep(0.25)
     main_loop(tb)
 	          
 
