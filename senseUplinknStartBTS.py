@@ -246,6 +246,12 @@ class my_top_block(gr.top_block):
 
 
 def main_loop(tb):
+    startOpenBTS(tb.down_freq,tb)
+
+
+
+
+def sub_loop(tb):
 
     # use a counter to make sure power is less than threshold
     # lowPowerCount = 0
@@ -283,11 +289,11 @@ def main_loop(tb):
         
         
 
-        if (power_db > tb.squelch_threshold) and (power_db > power_threshold):
-            print datetime.now(), "center_freq", center_freq, "power_db", power_db, "in use"
+        #if (power_db > tb.squelch_threshold) and (power_db > power_threshold):
+            #print datetime.now(), "center_freq", center_freq, "power_db", power_db, "in use"
             # lowPowerCount = 0
-        else:
-            print datetime.now(), "center_freq", center_freq, "power_db", power_db
+        #else:
+        print datetime.now(), "center_freq", center_freq, "power_db", power_db
             # lowPowerCount += 1
 
         #    if (lowPowerCount > lowPowerCountMax):
@@ -329,7 +335,7 @@ def startOpenBTS(downFrequency,tb):
     f.wait()
     tb.msgq.delete_head()
     time.sleep(0.25)
-    main_loop(tb)
+    sub_loop(tb)
 	          
 
 def quitOpenBTS(downFreq, tb):
