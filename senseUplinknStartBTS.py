@@ -259,6 +259,7 @@ def sub_loop(tb):
     print 'fft size', tb.fft_size
     N = tb.fft_size
     cusum = 0
+    counter = 0
     
 
     while 1:
@@ -304,10 +305,12 @@ def sub_loop(tb):
         #cusum cusum cusum is here
         cusum = max(0, cusum + power_db - power_threshold)
         if (cusum > 0):
-            print "CUSUM is now positive!!!"
-            down_freq = center_freq + 45e6
-            quitOpenBTS(down_freq, tb)
-            break
+            counter += 1
+            if (counter > 2):
+                print "CUSUM is now positive!!!"
+                down_freq = center_freq + 45e6
+                quitOpenBTS(down_freq, tb)
+                break
 
 
 
