@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
-from gnuradio import eng_notation
+#from gnuradio import eng_notation
 import sys
 import sqlite3
 import os
 import subprocess
 from datetime import datetime
+import re
 
 def main_loop():
     usage = "usage: %prog channel_freq"
@@ -13,7 +14,8 @@ def main_loop():
         print 'usage:', sys.argv[0], 'channel_freq'
         sys.exit(1)
 
-    center_freq = eng_notation.str_to_num(sys.argv[1])
+    #center_freq = eng_notation.str_to_num(sys.argv[1])
+    center_freq = int(re.match(r'\d+', sys.argv[1]).group())*1e6
     startOpenBTS(center_freq)
 
 def startOpenBTS(frequency):            
