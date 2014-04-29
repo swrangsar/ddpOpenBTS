@@ -4,8 +4,8 @@
 import sys
 import sqlite3
 import os
-import subprocess
-from datetime import datetime
+#import subprocess
+#from datetime import datetime
 import re
 
 def main_loop():
