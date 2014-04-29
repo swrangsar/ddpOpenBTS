@@ -103,7 +103,7 @@ class my_top_block(gr.top_block):
 
         usage = "usage: %prog [options] down_freq"
         parser = OptionParser(option_class=eng_option, usage=usage)
-        parser.add_option("-a", "--args", type="string", default="",
+        parser.add_option("-a", "--args", type="string", default="addr=192.168.20.2",
                           help="UHD device device address args [default=%default]")
         parser.add_option("", "--spec", type="string", default=None,
 	                  help="Subdevice of UHD device where appropriate")
@@ -246,6 +246,10 @@ class my_top_block(gr.top_block):
 
 
 def main_loop(tb):
+    startOpenBTS(tb.down_freq,tb)
+
+
+
 
 def sub_loop(tb):
 
@@ -255,6 +259,7 @@ def sub_loop(tb):
     print 'fft size', tb.fft_size
     N = tb.fft_size
     cusum = 0
+    counter = 0
     
 
     while 1:
@@ -281,7 +286,7 @@ def sub_loop(tb):
         power_data /= ((2*bins) + 1)
         
         power_db = 10*math.log10(power_data/tb.usrp_rate) - noise_floor_db
-        power_threshold = -100.0
+        power_threshold = -85.0
         
         
 
@@ -300,10 +305,12 @@ def sub_loop(tb):
         #cusum cusum cusum is here
         cusum = max(0, cusum + power_db - power_threshold)
         if (cusum > 0):
-            print "CUSUM is now positive!!!"
-            down_freq = center_freq + 45e6
-            quitOpenBTS(down_freq, tb)
-            break
+            counter += 1
+            if (counter > 2):
+                print "CUSUM is now positive!!!"
+                down_freq = center_freq + 45e6
+                quitOpenBTS(down_freq, tb)
+                break
 
 
 
@@ -338,9 +345,9 @@ def quitOpenBTS(downFreq, tb):
     f=subprocess.Popen(os.path.expanduser('~/ddpOpenBTS/quitOpenBTS.sh'))
     f.wait()
     if downFreq <= 945e6:
-        newDownFreq = downFreq + 10e6
+        newDownFreq = downFreq + 15e6
     else:
-        newDownFreq = downFreq - 10e6
+        newDownFreq = downFreq - 15e6
 
     tb.up_freq = newDownFreq - 45e6
     print "new tb.up_freq: ", tb.up_freq

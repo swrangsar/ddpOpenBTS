@@ -103,7 +103,7 @@ class my_top_block(gr.top_block):
 
         usage = "usage: %prog [options] down_freq"
         parser = OptionParser(option_class=eng_option, usage=usage)
-        parser.add_option("-a", "--args", type="string", default="",
+        parser.add_option("-a", "--args", type="string", default="addr=192.168.20.2",
                           help="UHD device device address args [default=%default]")
         parser.add_option("", "--spec", type="string", default=None,
 	                  help="Subdevice of UHD device where appropriate")
@@ -258,7 +258,7 @@ def main_loop(tb):
         # experimental area ###
         
         print "upfreq", tb.up_freq
-        tb.up_freq += 1e6
+        #tb.up_freq += 1e6
         # experimental area ###
 
 
