@@ -33,9 +33,6 @@ import math
 import struct
 import threading
 import time
-#import sqlite3
-#import os
-#import subprocess
 from datetime import datetime
 
 sys.stderr.write("Warning: this may have issues on some machines+Python version combinations to seg fault due to the callback in bin_statitics.\n\n")
@@ -109,7 +106,7 @@ class my_top_block(gr.top_block):
 	                  help="Subdevice of UHD device where appropriate")
         parser.add_option("-A", "--antenna", type="string", default=None,
                           help="select Rx Antenna where appropriate")
-        parser.add_option("-s", "--samp-rate", type="eng_float", default=10e6,
+        parser.add_option("-s", "--samp-rate", type="eng_float", default=5e6,
                           help="set sample rate [default=%default]")
         parser.add_option("-g", "--gain", type="eng_float", default=None,
                           help="set gain in dB (default is midpoint)")
@@ -120,7 +117,7 @@ class my_top_block(gr.top_block):
                           default=0.25, metavar="SECS",
                           help="time to dwell (in seconds) at a given frequency [default=%default]")
         parser.add_option("-b", "--channel-bandwidth", type="eng_float",
-                          default=9.7656e3, metavar="Hz",
+                          default=4882.8, metavar="Hz",
                           help="channel bandwidth of fft bins in Hz [default=%default]")
         parser.add_option("-l", "--lo-offset", type="eng_float",
                           default=0, metavar="Hz",
@@ -247,19 +244,11 @@ class my_top_block(gr.top_block):
 
 def main_loop(tb):
     
-    # use a counter to make sure power is less than threshold
-    #lowPowerCount = 0
-    #lowPowerCountMax = 10
     print 'fft size', tb.fft_size
     N = tb.fft_size
-    
+    mid = N//2
 
     while 1:
-        # experimental area ###
-        
-        #print "upfreq", tb.up_freq
-        #tb.up_freq += 1e6
-        # experimental area ###
 
 
         # Get the next message sent from the C++ code (blocking call).
@@ -275,27 +264,23 @@ def main_loop(tb):
 
     
         center_freq = m.center_freq
-        bins = 10
+        bins = 20
         power_data = 0
-        #noise_floor_db = 0 ### 10*math.log10(min(m.data)/tb.usrp_rate)
 
         for i in range(1, bins+1):
-            power_data += m.data[N-i] + m.data[i]
-        power_data += m.data[0]
+            power_data += m.data[mid-i] + m.data[mid+i]
+        power_data += m.data[mid]
         power_data /= ((2*bins) + 1)
         
-        power_db = 10*math.log10(power_data/tb.usrp_rate) # - noise_floor_db
+        power_db = 10*math.log10(power_data/tb.usrp_rate) 
         power_threshold = -100.0
 
         if (power_db > tb.squelch_threshold) and (power_db > power_threshold):
             print datetime.now(), "center_freq", center_freq, "power_db", power_db, "in use"
-            #lowPowerCount = 0
         else:
             print datetime.now(), "center_freq", center_freq, "power_db", power_db
-            #lowPowerCount += 0
-         #   if (lowPowerCount > lowPowerCountMax):
-         #      down_freq = center_freq + 45e6
-         #       break
+
+
 
 
 
