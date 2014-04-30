@@ -373,12 +373,6 @@ def precheck(downFreq, tb):
         # It contains the center frequency and the mag squared of the fft
         m = parse_msg(tb.msgq.delete_head())
 
-        # m.center_freq is the center frequency at the time of capture
-        # m.data are the mag_squared of the fft output
-        # m.raw_data is a string that contains the binary floats.
-        # You could write this as binary to a file.
-
-
 
         center_freq = m.center_freq
         bins = 102
@@ -394,7 +388,8 @@ def precheck(downFreq, tb):
         power_threshold = -70.0
         
         
-        print datetime.now(), "center_freq", center_freq, "power_db", power_db, "precheck"
+        print datetime.now(), "center_freq", center_freq, "power_db", power_db
+        print "precheck"
 
         #cusum cusum cusum is here
         cusum = max(0, cusum + power_db - power_threshold)
