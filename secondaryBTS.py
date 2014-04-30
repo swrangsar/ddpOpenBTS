@@ -316,9 +316,6 @@ def sub_loop(tb):
 
 
 
-
-
-
 def startOpenBTS(downFrequency,tb):            
     
     
@@ -352,8 +349,59 @@ def quitOpenBTS(downFreq, tb):
 
     tb.up_freq = newDownFreq - 45e6
     print "new tb.up_freq: ", tb.up_freq
+    precheck(newDownFreq, tb)
     startOpenBTS(newDownFreq, tb)
         
+
+def precheck(downFreq, tb):
+
+    print 'fft size', tb.fft_size
+    N = tb.fft_size
+    mid = N // 2
+    cusum = 0
+    counter = 0
+    i = 0
+    
+
+    while i < 10:
+
+        # Get the next message sent from the C++ code (blocking call).
+        # It contains the center frequency and the mag squared of the fft
+        m = parse_msg(tb.msgq.delete_head())
+
+        # m.center_freq is the center frequency at the time of capture
+        # m.data are the mag_squared of the fft output
+        # m.raw_data is a string that contains the binary floats.
+        # You could write this as binary to a file.
+
+
+
+        center_freq = m.center_freq
+        bins = 102
+        power_data = 0
+
+        
+        for i in range(1, bins+1):
+            power_data += m.data[mid-i] + m.data[mid+i]
+        power_data += m.data[mid]
+        power_data /= ((2*bins) + 1)
+        
+        power_db = 10*math.log10(power_data/tb.usrp_rate)
+        power_threshold = -70.0
+        
+        
+        print datetime.now(), "center_freq", center_freq, "power_db", power_db, "precheck"
+
+        #cusum cusum cusum is here
+        cusum = max(0, cusum + power_db - power_threshold)
+        i += 1
+        if (cusum > 0):
+            counter += 1
+            if (counter > 2):
+                print "CUSUM is now positive!!!"
+                quitOpenBTS(down_freq, tb)
+                break
+
 
 
 
