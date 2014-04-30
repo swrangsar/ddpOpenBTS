@@ -287,7 +287,7 @@ def sub_loop(tb):
         power_data /= ((2*bins) + 1)
         
         power_db = 10*math.log10(power_data/tb.usrp_rate) - noise_floor_db
-        power_threshold = -59.0
+        power_threshold = -70.0
         
         
 
