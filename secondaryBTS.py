@@ -312,6 +312,8 @@ def sub_loop(tb):
                 down_freq = center_freq + 45e6
                 quitOpenBTS(down_freq, tb)
                 break
+        else:
+            counter = 0
 
 
 
@@ -349,6 +351,8 @@ def quitOpenBTS(downFreq, tb):
 
     tb.up_freq = newDownFreq - 45e6
     print "new tb.up_freq: ", tb.up_freq
+    tb.msgq.delete_head()
+    time.sleep(0.25)
     precheck(newDownFreq, tb)
     startOpenBTS(newDownFreq, tb)
         
@@ -360,10 +364,10 @@ def precheck(downFreq, tb):
     mid = N // 2
     cusum = 0
     counter = 0
-    i = 0
+    loopcounter = 0
     
 
-    while i < 10:
+    while loopcounter < 10:
 
         # Get the next message sent from the C++ code (blocking call).
         # It contains the center frequency and the mag squared of the fft
@@ -394,13 +398,15 @@ def precheck(downFreq, tb):
 
         #cusum cusum cusum is here
         cusum = max(0, cusum + power_db - power_threshold)
-        i += 1
+        loopcounter += 1
         if (cusum > 0):
             counter += 1
             if (counter > 2):
                 print "CUSUM is now positive!!!"
                 quitOpenBTS(down_freq, tb)
                 break
+        else:
+            counter = 0
 
 
 
