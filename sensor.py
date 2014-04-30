@@ -33,9 +33,9 @@ import math
 import struct
 import threading
 import time
-import sqlite3
-import os
-import subprocess
+#import sqlite3
+#import os
+#import subprocess
 from datetime import datetime
 
 sys.stderr.write("Warning: this may have issues on some machines+Python version combinations to seg fault due to the callback in bin_statitics.\n\n")
@@ -248,8 +248,8 @@ class my_top_block(gr.top_block):
 def main_loop(tb):
     
     # use a counter to make sure power is less than threshold
-    lowPowerCount = 0
-    lowPowerCountMax = 10
+    #lowPowerCount = 0
+    #lowPowerCountMax = 10
     print 'fft size', tb.fft_size
     N = tb.fft_size
     
@@ -257,7 +257,7 @@ def main_loop(tb):
     while 1:
         # experimental area ###
         
-        print "upfreq", tb.up_freq
+        #print "upfreq", tb.up_freq
         #tb.up_freq += 1e6
         # experimental area ###
 
@@ -277,47 +277,27 @@ def main_loop(tb):
         center_freq = m.center_freq
         bins = 10
         power_data = 0
-        noise_floor_db = 0 ### 10*math.log10(min(m.data)/tb.usrp_rate)
+        #noise_floor_db = 0 ### 10*math.log10(min(m.data)/tb.usrp_rate)
 
         for i in range(1, bins+1):
             power_data += m.data[N-i] + m.data[i]
         power_data += m.data[0]
         power_data /= ((2*bins) + 1)
         
-        power_db = 10*math.log10(power_data/tb.usrp_rate) - noise_floor_db
-        power_threshold = -111.0
+        power_db = 10*math.log10(power_data/tb.usrp_rate) # - noise_floor_db
+        power_threshold = -100.0
 
         if (power_db > tb.squelch_threshold) and (power_db > power_threshold):
             print datetime.now(), "center_freq", center_freq, "power_db", power_db, "in use"
-            lowPowerCount = 0
+            #lowPowerCount = 0
         else:
-            print datetime.now(), "center_freq", center_freq, "power_db", power_db,
-            lowPowerCount += 0
-            if (lowPowerCount > lowPowerCountMax):
-                down_freq = center_freq + 45e6
+            print datetime.now(), "center_freq", center_freq, "power_db", power_db
+            #lowPowerCount += 0
+         #   if (lowPowerCount > lowPowerCountMax):
+         #      down_freq = center_freq + 45e6
+         #       break
 
-                break
 
-
-def startOpenBTS(downFrequency):            
-    
-    
-    arfcn=int((downFrequency-935e6)/2e5)
-    if (arfcn < 0):
-        print "ARFCN must be > 0 !!!"
-        sys.exit(1)
-    print 'ARFCN=', arfcn
-    #DB modifications
-    t=(arfcn,)
-    conn=sqlite3.connect("/etc/OpenBTS/OpenBTS.db")
-    cursor=conn.cursor()
-    cursor.execute("update config set valuestring=? where keystring='GSM.Radio.C0'",t)
-    conn.commit()
-
-    #start the OpenBTS
-    f=subprocess.Popen(os.path.expanduser('~/ddpOpenBTS/runOpenBTS.sh'))
-    f.wait()
-	          
 
 if __name__ == '__main__':
     t = ThreadClass()
