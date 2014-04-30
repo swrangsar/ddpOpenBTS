@@ -106,7 +106,7 @@ class my_top_block(gr.top_block):
 	                  help="Subdevice of UHD device where appropriate")
         parser.add_option("-A", "--antenna", type="string", default=None,
                           help="select Rx Antenna where appropriate")
-        parser.add_option("-s", "--samp-rate", type="eng_float", default=5e6,
+        parser.add_option("-s", "--samp-rate", type="eng_float", default=1e6,
                           help="set sample rate [default=%default]")
         parser.add_option("-g", "--gain", type="eng_float", default=None,
                           help="set gain in dB (default is midpoint)")
@@ -117,7 +117,7 @@ class my_top_block(gr.top_block):
                           default=0.25, metavar="SECS",
                           help="time to dwell (in seconds) at a given frequency [default=%default]")
         parser.add_option("-b", "--channel-bandwidth", type="eng_float",
-                          default=4882.8, metavar="Hz",
+                          default=976.56, metavar="Hz",
                           help="channel bandwidth of fft bins in Hz [default=%default]")
         parser.add_option("-l", "--lo-offset", type="eng_float",
                           default=0, metavar="Hz",
@@ -264,7 +264,7 @@ def main_loop(tb):
 
     
         center_freq = m.center_freq
-        bins = 20
+        bins = 102
         power_data = 0
 
         for i in range(1, bins+1):
