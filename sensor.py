@@ -246,7 +246,7 @@ def main_loop(tb):
     
     print 'fft size', tb.fft_size
     N = tb.fft_size
-    mid = N//2
+    mid = N // 2
 
     while 1:
 
