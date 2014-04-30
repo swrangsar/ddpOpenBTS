@@ -294,7 +294,7 @@ def sub_loop(tb):
             #print datetime.now(), "center_freq", center_freq, "power_db", power_db, "in use"
             # lowPowerCount = 0
         #else:
-        print datetime.now(), "center_freq", center_freq - 5e6, "power_db", power_db
+        print datetime.now(), "center_freq", center_freq, "power_db", power_db
             # lowPowerCount += 1
 
         #    if (lowPowerCount > lowPowerCountMax):
