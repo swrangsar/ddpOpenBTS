@@ -715,9 +715,9 @@ def quitOpenBTS(downFreq, tb):
     f=subprocess.Popen(os.path.expanduser('~/ddpOpenBTS/quitOpenBTS.sh'))
     f.wait()
     if downFreq <= 945e6:
-        newDownFreq = downFreq + 15e6
+        newDownFreq = downFreq + 10e6
     else:
-        newDownFreq = downFreq - 15e6
+        newDownFreq = downFreq - 10e6
 
     tb.up_freq = newDownFreq - 45e6
     print "new tb.up_freq: ", tb.up_freq
