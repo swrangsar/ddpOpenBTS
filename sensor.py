@@ -273,7 +273,7 @@ def main_loop(tb):
         power_data /= ((2*bins) + 1)
         
         power_db = 10*math.log10(power_data/tb.usrp_rate) 
-        power_threshold = -100.0
+        power_threshold = -59.0
 
         if (power_db > tb.squelch_threshold) and (power_db > power_threshold):
             print datetime.now(), "center_freq", center_freq, "power_db", power_db, "in use"
