@@ -289,7 +289,6 @@ def sub_loop(tb):
         power_db = 10*math.log10(power_data/tb.usrp_rate) - noise_floor_db
         power_threshold = -70.0
         
-        
 
         #if (power_db > tb.squelch_threshold) and (power_db > power_threshold):
             #print datetime.now(), "center_freq", center_freq, "power_db", power_db, "in use"
@@ -318,9 +317,7 @@ def sub_loop(tb):
 
 
 
-def startOpenBTS(downFrequency,tb):            
-    
-    
+def startOpenBTS(downFrequency,tb):
     arfcn=int((downFrequency-935e6)/2e5)
     if (arfcn < 0):
         print "ARFCN must be > 0 !!!"
@@ -343,21 +340,21 @@ def startOpenBTS(downFrequency,tb):
 
 def quitOpenBTS(downFreq, tb):
     f=subprocess.Popen(os.path.expanduser('~/ddpOpenBTS/quitOpenBTS.sh'))
-    f.wait()
-    if downFreq <= 950e6:
-        newDownFreq = downFreq + 5e6
-    else:
+    f.wait()    
+    newDownFreq = getNewChannel(downFreq, tb)
+    startOpenBTS(newDownFreq, tb)
+
+        
+
+def getNewChannel(downFreq, tb):
+    newDownFreq = downFreq + 7e6
+    if newDownFreq > 960e6:
         newDownFreq = 936e6
 
     tb.up_freq = newDownFreq - 45e6
     print "new tb.up_freq: ", tb.up_freq
     tb.msgq.delete_head()
     time.sleep(0.25)
-    precheck(newDownFreq, tb)
-    startOpenBTS(newDownFreq, tb)
-        
-
-def precheck(downFreq, tb):
 
     print 'fft size', tb.fft_size
     N = tb.fft_size
@@ -398,10 +395,11 @@ def precheck(downFreq, tb):
             counter += 1
             if (counter > 2):
                 print "CUSUM is now positive!!!"
-                quitOpenBTS(down_freq, tb)
+                newDownFreq = getNewChannel(newDownFreq, tb)
                 break
         else:
             counter = 0
+    return newDownFreq
 
 
 
